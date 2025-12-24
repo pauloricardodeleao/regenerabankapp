@@ -1,0 +1,9 @@
+{
+  "name": "Ok regenera ",
+  "description": "Quantum Core Banking System V20.7.2 - Gold Master",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
