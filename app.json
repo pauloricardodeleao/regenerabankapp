@@ -2,17 +2,14 @@
   "expo": {
     "name": "REGENERA BANK GLOBAL",
     "slug": "regenera-bank-global",
+    "version": "1.0.0",
     "owner": "regenerabank",
-    "android": {
-      "package": "com.regenerabank.global"
-    },
-    "ios": {
-      "bundleIdentifier": "com.regenerabank.global"
-    },
     "extra": {
       "eas": {
         "projectId": "09658c91-a16a-4725-ba31-38494b5f551f"
       }
-    }
+    },
+    "android": { "package": "com.regenerabank.global" },
+    "ios": { "bundleIdentifier": "com.regenerabank.global" }
   }
 }
