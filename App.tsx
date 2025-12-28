@@ -15,7 +15,7 @@
 import React, { useState } from 'react';
 import { ScreenName } from './types';
 
-// Screens - Normalização de nomes de arquivos para evitar erros de import
+// Core Application Screens
 import { SplashScreen } from './components/screens/SplashScreen';
 import { LoginScreen } from './components/screens/LoginScreen';
 import { RecoveryScreen } from './components/screens/RecoveryScreen';
@@ -43,7 +43,7 @@ import { ARInvestmentScreen } from './components/screens/ARInvestmentScreen';
 import { InvestmentHubScreen } from './components/screens/InvestmentHubScreen';
 import { SecurityCenterScreen } from './components/screens/SecurityCenterScreen';
 
-// Feature Modules
+// Feature Focused Modules
 import { InternationalTransferScreen } from './components/screens/InternationalTransferScreen';
 import { CarbonScreen } from './components/screens/CarbonScreen';
 import { GoalsScreen } from './components/screens/GoalsScreen';
@@ -57,6 +57,7 @@ export default function App() {
   const currentScreen = history[history.length - 1];
 
   const navigate = (screen: ScreenName) => {
+    // Reset de pilha para fluxos de autenticação para otimização de memória
     if (screen === 'dashboard' || screen === 'login') {
       setHistory([screen]);
     } else {

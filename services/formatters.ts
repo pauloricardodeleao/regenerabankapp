@@ -1,45 +1,40 @@
 /*
 ═══════════════════════════════════════════════════════════════════════════════
-  REGENERA BANK - CORE TRANSACTION SERVICE
-  Module: Account & Ledger
-   
-  Developer: Don Paulo Ricardo
-  CEO: Raphaela Cervesky
-   
-  ORCID: https://orcid.org/0009-0002-1934-3559
-  Copyright © 2025 Regenera Ecosystem. All rights reserved.
+  REGENERA BANK - INFRASTRUCTURE LAYER
+  Utility: Financial Formatters
 ═══════════════════════════════════════════════════════════════════════════════
 */
 
-// [FILE] services/formatters.ts
+import { Money } from '../domain/Money';
 
 /**
- * Formats integer cents to BRL currency string.
- * Uses strict typing to prevent float math issues.
- * @param cents Integer value of money
+ * Formata valores monetários.
+ * @param value Pode ser number (centavos) ou Money VO.
  */
-export const formatCurrency = (cents: number): string => {
-  const value = cents / 100;
+export const formatCurrency = (value: number | Money): string => {
+  if (value instanceof Money) {
+    return value.getFormattedBRL();
+  }
+  
+  if (typeof value !== 'number' || isNaN(value)) return 'R$ 0,00';
+  
+  // Don: Fallback pragmático pra código que ainda não usa o VO.
+  const centsValue = Math.floor(value) / 100;
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
-    minimumFractionDigits: 2
-  }).format(value);
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(centsValue);
 };
 
-export const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString('pt-BR', {
+export const formatDate = (dateString: string | number): string => {
+  if (!dateString) return '--/--';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: 'short',
     hour: '2-digit',
     minute: '2-digit'
   });
 };
-
-/*
-╔══════════════════════════════════════════════════════════════════════════╗
-║  REGENERA BANK - PRODUCTION BUILD                                        ║
-║  System Status: Stable & Secure                                          ║
-║  © 2025 Don Paulo Ricardo de Leão • Todos os direitos reservados         ║
-╚══════════════════════════════════════════════════════════════════════════╝
-*/

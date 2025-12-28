@@ -41,7 +41,6 @@ export const generateRaphaResponse = async (
   const apiKey = process.env.API_KEY;
 
   if (!apiKey) {
-    console.error("[CRITICAL] API_KEY missing in environment variables.");
     return "O terminal de inteligência está temporariamente offline para sincronização de chaves criptográficas.";
   }
 
@@ -62,26 +61,24 @@ export const generateRaphaResponse = async (
       }
     });
 
+    // Don Standard: Use property text, not method text()
     const text = response.text;
-    if (!text) throw new Error("EMPTY_RESPONSE");
+    if (!text) throw new Error("EMPTY_AI_RESPONSE");
 
     return text;
 
   } catch (error: any) {
     const errorMsg = error?.message || "";
     
-    // Tratamento de erro de propagação de credenciais
     if (errorMsg.includes("Requested entity was not found") || errorMsg.includes("403")) {
       return "Sincronização de credenciais pendente no ambiente de produção. Seus ativos permanecem protegidos pelo Quantum Shield.";
     }
 
     if (retries > 0) {
-      // Exponential backoff simulado
       await new Promise(res => setTimeout(res, 1000));
       return generateRaphaResponse(userMessage, chatHistory, retries - 1);
     }
     
-    console.error("[CRITICAL] AI Infrastructure failure:", error);
     return "O terminal de inteligência está em modo de manutenção preventiva. A integridade dos seus dados está garantida.";
   }
 };

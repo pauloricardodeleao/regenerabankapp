@@ -12,9 +12,9 @@
 */
 
 // [FILE] components/screens/AnalysisScreen.tsx
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
-  ArrowLeft, Coffee, Zap, Car, ArrowDownLeft, Settings2, ShoppingBag, Filter, Download, CreditCard, Search, X, Edit2, Trash2
+  ArrowLeft, Coffee, Zap, Car, ArrowDownLeft, Settings2, ShoppingBag, Filter, Search, X, Edit2, Trash2
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { ScreenProps, Transaction } from '../../types';
@@ -54,6 +54,38 @@ const PERIODS = [
   { id: '2025-03', label: 'Março 2025' },
 ];
 
+const useAnimatedCounter = (target: number, duration: number = 1000) => {
+  const [current, setCurrent] = useState(target);
+  const previousRef = useRef(target);
+  
+  useEffect(() => {
+    const start = previousRef.current;
+    const end = target;
+    const startTime = performance.now();
+
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 5);
+      const next = start + (end - start) * ease;
+      setCurrent(next);
+      previousRef.current = next;
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setCurrent(end);
+        previousRef.current = end;
+      }
+    };
+
+    const handle = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(handle);
+  }, [target, duration]);
+
+  return current;
+};
+
 export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) => {
   const [selectedPeriod, setSelectedPeriod] = useState('2025-05');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -86,6 +118,7 @@ export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) =>
   }, [filteredData, selectedCategory, categories]);
 
   const totalValue = chartData.reduce((sum, d) => sum + d.value, 0);
+  const animatedTotal = useAnimatedCounter(totalValue);
 
   const getIcon = (catId: string) => {
     switch (catId) {
@@ -141,7 +174,7 @@ export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) =>
                <>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={chartData} innerRadius={80} outerRadius={105} paddingAngle={4} dataKey="value" stroke="none" cornerRadius={8}>
+                    <Pie data={chartData} innerRadius={80} outerRadius={105} paddingAngle={4} dataKey="value" stroke="none" cornerRadius={8} isAnimationActive={true} animationDuration={1000}>
                       {chartData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                     </Pie>
                     <Tooltip contentStyle={{ backgroundColor: '#000', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px' }} />
@@ -151,7 +184,7 @@ export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) =>
                   <p className="text-[#9CA3AF] text-[10px] font-black uppercase tracking-[0.2em] mb-1">
                     {selectedCategory === 'income' ? 'Entradas' : 'Saídas'}
                   </p>
-                  <p className="text-3xl font-black text-white tracking-tighter">{formatCurrency(totalValue)}</p>
+                  <p className="text-3xl font-black text-white tracking-tighter">{formatCurrency(Math.round(animatedTotal))}</p>
                 </div>
                </>
              ) : (

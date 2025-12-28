@@ -63,6 +63,25 @@
       }
       .animate-float { animation: float-y 4s ease-in-out infinite; }
 
+      @keyframes quantum-pulse {
+        0%, 100% { opacity: 0.4; filter: blur(40px) scale(1); }
+        50% { opacity: 0.8; filter: blur(60px) scale(1.1); }
+      }
+      .animate-quantum { animation: quantum-pulse 8s ease-in-out infinite; }
+
+      @keyframes scanline {
+        0% { transform: translateY(-100%); }
+        100% { transform: translateY(1000%); }
+      }
+      .scanline {
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(to bottom, transparent, rgba(58, 102, 255, 0.05), transparent);
+        position: absolute;
+        animation: scanline 4s linear infinite;
+        pointer-events: none;
+      }
+
       .perspective-3d {
         perspective: 1000px;
         transform-style: preserve-3d;
@@ -71,20 +90,26 @@
   <script type="importmap">
 {
   "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.1",
-    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.1/client",
-    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.1",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
-    "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
-    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.4.7",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^18.2.0",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^18.2.0/client",
+    "react-dom": "https://aistudiocdn.com/react-dom@^18.2.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.344.0",
+    "recharts": "https://aistudiocdn.com/recharts@^2.12.2",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@0.21.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^11.0.8",
+    "react-native": "https://aistudiocdn.com/react-native-web@^0.19.10",
+    "expo": "https://aistudiocdn.com/expo@^50.0.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
     "@nestjs/core": "https://esm.sh/@nestjs/core@^11.1.10",
     "@nestjs/platform-express": "https://esm.sh/@nestjs/platform-express@^11.1.10",
     "express": "https://esm.sh/express@^5.2.1",
     "firebase-functions": "https://esm.sh/firebase-functions@^7.0.2",
-    "@nestjs/common": "https://esm.sh/@nestjs/common@^11.1.10"
+    "@nestjs/common": "https://esm.sh/@nestjs/common@^11.1.10",
+    "crypto": "https://esm.sh/crypto@^1.0.1",
+    "ioredis": "https://esm.sh/ioredis@^5.8.2",
+    "@nestjs/axios": "https://esm.sh/@nestjs/axios@^4.0.1",
+    "@nestjs/terminus": "https://esm.sh/@nestjs/terminus@^11.0.0"
   }
 }
 </script>
@@ -92,5 +117,6 @@
   <body>
     <div id="root" class="bg-black h-screen w-screen overflow-hidden"></div>
     <div class="bg-noise"></div>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>

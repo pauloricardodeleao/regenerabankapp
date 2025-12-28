@@ -12,6 +12,8 @@
 */
 
 // [FILE] types.ts
+import { Money as MoneyVO } from './domain/Money';
+
 export type ScreenName = 
   // Auth & Onboarding
   | 'splash' 
@@ -23,7 +25,7 @@ export type ScreenName =
   // Core
   | 'dashboard' 
   | 'ar-view' 
-  | 'investment-hub' // NEW: Multi-asset performance dashboard
+  | 'investment-hub' 
   
   // Cards
   | 'cards' 
@@ -71,7 +73,7 @@ export type ScreenName =
   | 'notifications'
   | 'language'
   | 'theme'
-  | 'security-center'; // NEW: Advanced limits & biometric vault
+  | 'security-center';
 
 export interface ScreenProps {
   onNavigate: (screen: ScreenName) => void;
@@ -88,12 +90,13 @@ export interface UserProfile {
   tier: 'Standard' | 'Gold' | 'Black' | 'Quantum';
 }
 
-export type Money = number; 
+// Don: 'number' era herança de código legado. Agora usamos o Value Object.
+export type Money = MoneyVO; 
 
 export interface Transaction {
   id: string;
   type: 'in' | 'out';
-  amount: Money;
+  amount: number; // Don: No DTO ainda mantemos number (centavos) pra serialização JSON leve.
   description: string;
   date: string;
   category: string;
@@ -105,7 +108,7 @@ export interface Transaction {
 export interface Bill {
   id: string;
   title: string;
-  amount: Money;
+  amount: number; // Centavos
   dueDate: {
     day: string;
     month: string;

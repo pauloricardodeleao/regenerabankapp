@@ -1,7 +1,7 @@
 /*
 ═══════════════════════════════════════════════════════════════════════════════
   REGENERA BANK - CORE TRANSACTION SERVICE
-  Module: Account & Ledger
+  Module: Bootstrapping & Runtime Control
    
   Developer: Don Paulo Ricardo
   CEO: Raphaela Cervesky
@@ -12,22 +12,35 @@
 */
 
 // [FILE] index.tsx
+import { registerRootComponent } from 'expo';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { Platform } from 'react-native';
 import App from './App';
 
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("CRITICAL: Root element missing. Application cannot mount.");
+/**
+ * Bootstrapping Logic:
+ * Ensures cross-platform compatibility for production distribution.
+ */
+try {
+  if (Platform.OS === 'web') {
+    const rootElement = document.getElementById('root');
+    if (!rootElement) {
+      throw new Error("CRITICAL: Root element #root not found in index.html");
+    }
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    );
+  } else {
+    // Mobile Environment (Android/iOS)
+    registerRootComponent(App);
+  }
+} catch (error) {
+  console.error("FATAL_RUNTIME_ERROR:", error);
 }
-
-const root = ReactDOM.createRoot(rootElement);
-
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
 
 /*
 ╔══════════════════════════════════════════════════════════════════════════╗
