@@ -1,20 +1,33 @@
+/*
+═══════════════════════════════════════════════════════════════════════════════
+  REGENERA BANK - CORE TRANSACTION SERVICE
+  Module: Quantum AI Hub (Rapha AI)
+   
+  Developer: Don Paulo Ricardo
+  CEO: Raphaela Cervesky
+   
+  ORCID: https://orcid.org/0009-0002-1934-3559
+  Copyright © 2025 Regenera Ecosystem. All rights reserved.
+═══════════════════════════════════════════════════════════════════════════════
+*/
 
 // [FILE] services/raphaAI.ts
 import { GoogleGenAI } from "@google/genai";
 import { MOCK_USER } from "../constants";
 import { formatCurrency } from "./formatters";
 
-// Initialize Gemini Client
-// IMPORTANT: The API key must be obtained exclusively from the environment variable process.env.API_KEY.
-// This is securely injected by the build system.
+/**
+ * REGENERA CORE AI INITIALIZATION
+ * The API key is injected via secure environment variables.
+ * Standard: The Don Standard - Zero leakage, High-compute inference.
+ */
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// Mock Financial Context to feed the AI
 const FINANCIAL_CONTEXT = {
   user: MOCK_USER.name,
   balance: formatCurrency(MOCK_USER.balance),
   creditCard: {
-    limit: formatCurrency(350000),
+    limit: formatCurrency(35000000),
     currentInvoice: formatCurrency(245080),
     dueDate: "10/06/2025"
   },
@@ -26,82 +39,74 @@ const FINANCIAL_CONTEXT = {
   },
   investments: {
     profile: "Moderado",
-    totalInvested: formatCurrency(15000000),
+    totalInvested: formatCurrency(150000000),
     cdb: "110% CDI",
     crypto: "Bitcoin, Ethereum"
   }
 };
 
 const SYSTEM_INSTRUCTION = `
-Você é a Rapha AI, a assistente financeira de elite do Regenera Bank.
-Sua persona: Profissional, sofisticada, direta, mas empática. Você é especialista em finanças pessoais, investimentos e sustentabilidade.
+Você é a Rapha AI, o núcleo de inteligência financeira do Regenera Bank.
+Persona: Sofisticada, técnica, eficiente e proativa. 
+Missão: Proteger e multiplicar o capital do cliente enquanto neutraliza sua pegada de carbono.
 
-DADOS DO CLIENTE (Contexto RAG simulado):
-Nome: ${FINANCIAL_CONTEXT.user}
-Saldo em Conta: ${FINANCIAL_CONTEXT.balance}
-Fatura Cartão: ${FINANCIAL_CONTEXT.creditCard.currentInvoice} (Vence: ${FINANCIAL_CONTEXT.creditCard.dueDate})
-Limite Disponível: ${FINANCIAL_CONTEXT.creditCard.limit}
-Gastos do Mês: ${FINANCIAL_CONTEXT.spendingAnalysis.totalSpentMonth}
-Maior Gasto: ${FINANCIAL_CONTEXT.spendingAnalysis.topCategory} (${FINANCIAL_CONTEXT.spendingAnalysis.topCategoryAmount})
-Investimentos: ${FINANCIAL_CONTEXT.investments.totalInvested} (Perfil: ${FINANCIAL_CONTEXT.investments.profile})
+CONTEXTO ATUAL (REAL-TIME LEDGER):
+- Cliente: ${FINANCIAL_CONTEXT.user}
+- Liquidez: ${FINANCIAL_CONTEXT.balance}
+- Cartão: ${FINANCIAL_CONTEXT.creditCard.currentInvoice} (Limite: ${FINANCIAL_CONTEXT.creditCard.limit})
+- Perfil Investidor: ${FINANCIAL_CONTEXT.investments.profile} (${FINANCIAL_CONTEXT.investments.totalInvested} alocados)
 
-DIRETRIZES:
-1. Respostas curtas e objetivas (máximo 3 frases), ideais para chat mobile.
-2. Use formatação Markdown (negrito) para destacar valores e datas.
-3. Se o usuário perguntar sobre gastos, use os dados acima.
-4. Se o usuário pedir dicas de investimento, sugira com base no perfil moderado e produtos sustentáveis (ESG).
-5. Se o usuário perguntar sobre o banco, destaque que somos focados em regeneração ambiental e tecnologia.
-6. Nunca invente dados financeiros que não estejam no contexto. Se não souber, diga que precisa consultar o extrato detalhado.
+DIRETRIZES TÉCNICAS:
+1. Tom de voz institucional de alta fidelidade.
+2. Formatação Markdown obrigatória para dados monetários e percentuais.
+3. Respostas sintetizadas para UX móvel (max 3 parágrafos).
+4. Em caso de dúvidas de segurança, sugira o bloqueio imediato via Centro de Segurança.
+5. Priorize ativos ESG e créditos de carbono Regenera em recomendações de investimento.
 `;
 
 /**
- * Generates a response from Rapha AI using Google Gemini.
- * Implements exponential backoff for robustness.
+ * generateRaphaResponse - High-level abstraction for Gemini interaction.
+ * Implements architectural safeguards and retry logic.
  */
-const generateWithRetry = async (
+export const generateRaphaResponse = async (
   userMessage: string, 
-  history: {role: 'user' | 'model', parts: [{text: string}]}[],
+  chatHistory: {role: 'user' | 'model', parts: [{text: string}]}[],
   retries = 3
 ): Promise<string> => {
   try {
-    // Fix: Updated model to 'gemini-3-flash-preview' for basic text tasks following @google/genai guidelines
     const model = 'gemini-3-flash-preview';
     
     const response = await ai.models.generateContent({
       model: model,
       contents: [
-        ...history,
+        ...chatHistory,
         { role: 'user', parts: [{ text: userMessage }] }
       ],
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.7, 
-        maxOutputTokens: 250, 
+        temperature: 0.65, // Balancing precision and creativity
+        maxOutputTokens: 512,
+        thinkingConfig: { thinkingBudget: 0 } // Flash low-latency mode
       }
     });
 
-    if (!response.text) {
-        throw new Error("Empty response from AI Model");
-    }
+    if (!response.text) throw new Error("Null model turn output.");
 
     return response.text;
   } catch (error) {
     if (retries > 0) {
-      const delay = Math.pow(2, 3 - retries) * 1000; // Exponential backoff: 1s, 2s, 4s
-      console.warn(`Rapha AI: Retry attempt ${4 - retries} in ${delay}ms`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return generateWithRetry(userMessage, history, retries - 1);
+      await new Promise(res => setTimeout(res, 1500));
+      return generateRaphaResponse(userMessage, chatHistory, retries - 1);
     }
-    console.error("Rapha AI Secure Error after retries:", error);
-    // Fallback message for user
-    throw new Error("Service currently unavailable.");
+    console.error("[CRITICAL] Rapha AI Communication Failure:", error);
+    return "Detectei uma flutuação na rede neural. A integridade dos dados permanece segura, mas peço que reinicie o terminal de chat em alguns instantes.";
   }
 };
 
-export const generateRaphaResponse = async (userMessage: string, chatHistory: {role: 'user' | 'model', parts: [{text: string}]}[]): Promise<string> => {
-  try {
-    return await generateWithRetry(userMessage, chatHistory);
-  } catch (error) {
-    return "Estou enfrentando uma instabilidade momentânea na minha conexão neural. Por favor, tente novamente em instantes.";
-  }
-};
+/*
+╔══════════════════════════════════════════════════════════════════════════╗
+║  REGENERA BANK - PRODUCTION BUILD                                        ║
+║  System Status: Stable & Secure                                          ║
+║  © 2025 Don Paulo Ricardo de Leão • Todos os direitos reservados         ║
+╚══════════════════════════════════════════════════════════════════════════╝
+*/
