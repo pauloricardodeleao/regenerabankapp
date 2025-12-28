@@ -1,30 +1,28 @@
 {
   "name": "ok-regenera",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "version": "20.7.2",
+  "main": "index.tsx",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build:configure": "eas build:configure"
   },
   "dependencies": {
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
-    "lucide-react": "^0.556.0",
-    "recharts": "^3.5.1",
-    "@google/genai": "^1.31.0",
-    "framer-motion": "^12.4.7",
-    "@nestjs/core": "^11.1.10",
-    "@nestjs/platform-express": "^11.1.10",
-    "express": "^5.2.1",
-    "firebase-functions": "^7.0.2",
-    "@nestjs/common": "^11.1.10"
+    "expo": "~50.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.73.4",
+    "lucide-react": "^0.344.0",
+    "recharts": "^2.12.2",
+    "framer-motion": "^11.0.8",
+    "@google/genai": "^0.2.1"
   },
   "devDependencies": {
-    "@types/node": "^22.14.0",
-    "@vitejs/plugin-react": "^5.0.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
-  }
+    "@types/react": "~18.2.45",
+    "typescript": "^5.3.3",
+    "eas-cli": "^7.1.1"
+  },
+  "private": true
 }

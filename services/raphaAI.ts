@@ -16,12 +16,6 @@ import { GoogleGenAI } from "@google/genai";
 import { MOCK_USER } from "../constants";
 import { formatCurrency } from "./formatters";
 
-/**
- * REGENERA CORE AI SERVICE - GOLD MASTER EDITION
- * Model: gemini-3-flash-preview
- * Standard: The Don Standard (ACID Compliance)
- */
-
 const SYSTEM_INSTRUCTION = `
 Você é a Rapha AI, o núcleo de inteligência financeira do Regenera Bank.
 Persona: Sofisticada, técnica, eficiente e proativa. 
@@ -44,10 +38,16 @@ export const generateRaphaResponse = async (
   chatHistory: {role: 'user' | 'model', parts: [{text: string}]}[],
   retries = 3
 ): Promise<string> => {
-  // Inicialização exclusiva via process.env.API_KEY conforme política de segurança
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = process.env.API_KEY;
+
+  if (!apiKey) {
+    console.error("[CRITICAL] API_KEY missing in environment variables.");
+    return "O terminal de inteligência está temporariamente offline para sincronização de chaves criptográficas.";
+  }
 
   try {
+    const ai = new GoogleGenAI({ apiKey });
+    
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [
@@ -63,25 +63,25 @@ export const generateRaphaResponse = async (
     });
 
     const text = response.text;
-    if (!text) throw new Error("EMPTY_INFERENCE");
+    if (!text) throw new Error("EMPTY_RESPONSE");
 
     return text;
 
   } catch (error: any) {
     const errorMsg = error?.message || "";
     
-    // Tratamento de falha de propagação de credenciais
+    // Tratamento de erro de propagação de credenciais
     if (errorMsg.includes("Requested entity was not found") || errorMsg.includes("403")) {
-      console.error("[SECURITY] AUTHENTICATION FAILURE: Credential propagation required.");
       return "Sincronização de credenciais pendente no ambiente de produção. Seus ativos permanecem protegidos pelo Quantum Shield.";
     }
 
     if (retries > 0) {
+      // Exponential backoff simulado
       await new Promise(res => setTimeout(res, 1000));
       return generateRaphaResponse(userMessage, chatHistory, retries - 1);
     }
     
-    console.error("[CRITICAL] AI INFRASTRUCTURE FAILURE:", error);
-    return "O terminal de inteligência está em modo de manutenção para sincronização com o Quantum Core. Tente novamente em instantes.";
+    console.error("[CRITICAL] AI Infrastructure failure:", error);
+    return "O terminal de inteligência está em modo de manutenção preventiva. A integridade dos seus dados está garantida.";
   }
 };

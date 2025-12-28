@@ -1,7 +1,7 @@
 /*
 ═══════════════════════════════════════════════════════════════════════════════
   REGENERA BANK - CORE TRANSACTION SERVICE
-  Module: Account & Ledger
+  Module: Root Application Controller
    
   Developer: Don Paulo Ricardo
   CEO: Raphaela Cervesky
@@ -15,7 +15,7 @@
 import React, { useState } from 'react';
 import { ScreenName } from './types';
 
-// Screens
+// Screens - Normalização de nomes de arquivos para evitar erros de import
 import { SplashScreen } from './components/screens/SplashScreen';
 import { LoginScreen } from './components/screens/LoginScreen';
 import { RecoveryScreen } from './components/screens/RecoveryScreen';
@@ -43,7 +43,7 @@ import { ARInvestmentScreen } from './components/screens/ARInvestmentScreen';
 import { InvestmentHubScreen } from './components/screens/InvestmentHubScreen';
 import { SecurityCenterScreen } from './components/screens/SecurityCenterScreen';
 
-// Feature Screens
+// Feature Modules
 import { InternationalTransferScreen } from './components/screens/InternationalTransferScreen';
 import { CarbonScreen } from './components/screens/CarbonScreen';
 import { GoalsScreen } from './components/screens/GoalsScreen';
@@ -74,7 +74,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased selection:bg-[#3A66FF] selection:text-white flex items-center justify-center p-0 md:p-4">
+    <div className="min-h-screen bg-black text-white font-sans antialiased flex items-center justify-center p-0 md:p-4">
       <div className="w-full max-w-md min-h-screen md:h-[852px] bg-black md:rounded-[3rem] shadow-2xl relative overflow-hidden md:border-[8px] md:border-[#1a1a1a]">
         
         <div className="hidden md:block absolute top-2 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-50 pointer-events-none border border-gray-900" />
@@ -99,14 +99,11 @@ export default function App() {
             {currentScreen === 'ar-view' && <ARInvestmentScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'investment-hub' && <InvestmentHubScreen onNavigate={navigate} onBack={goBack} />}
             
-            {/* Cards Module */}
             {currentScreen === 'cards' && <CardScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'add-card' && <AddCardScreen onNavigate={navigate} onBack={goBack} />}
-            {currentScreen === 'new-card-offer' && <NewCardOfferScreen onNavigate={navigate} onBack={goBack} />}
-            {currentScreen === 'card-settings' && <CardSettingsScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'card-new' && <NewCardOfferScreen onNavigate={navigate} onBack={goBack} />}
+            {currentScreen === 'card-settings' && <CardSettingsScreen onNavigate={navigate} onBack={goBack} />}
             
-            {/* PIX Module */}
             {currentScreen === 'pix' && <PixScreen onNavigate={navigate} onBack={goBack} initialMode="hub" />}
             {currentScreen === 'pix-scan' && <PixScreen onNavigate={navigate} onBack={goBack} initialMode="scan" />}
             {currentScreen === 'pix-transfer' && <PixScreen onNavigate={navigate} onBack={goBack} initialMode="transfer" />}
@@ -115,14 +112,12 @@ export default function App() {
             {currentScreen === 'pix-success' && <PixScreen onNavigate={navigate} onBack={goBack} initialMode="success" />}
             {currentScreen === 'pix-receive' && <PixScreen onNavigate={navigate} onBack={goBack} initialMode="receive" />}
             
-            {/* Transfers & Payments */}
             {currentScreen === 'transfer-new' && <TransferContactScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'manual-transfer' && <ManualTransferScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'international-transfer' && <InternationalTransferScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'top-up' && <TopUpScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'transaction-detail' && <TransactionDetailScreen onNavigate={navigate} onBack={goBack} />}
             
-            {/* Analysis & AI */}
             {currentScreen === 'analysis' && <AnalysisScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'chat' && <ChatScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'carbon' && <CarbonScreen onNavigate={navigate} onBack={goBack} />}
@@ -130,13 +125,11 @@ export default function App() {
             {currentScreen === 'kids' && <KidsModeScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'pets' && <PetSavingsScreen onNavigate={navigate} onBack={goBack} />}
             
-            {/* Marketplace & Partners */}
             {currentScreen === 'marketplace' && <MarketplaceScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'partner-amazon' && <PartnerStoreScreen partnerId="amazon" onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'partner-magalu' && <PartnerStoreScreen partnerId="magalu" onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'partner-nike' && <PartnerStoreScreen partnerId="nike" onNavigate={navigate} onBack={goBack} />}
             
-            {/* Settings & Support */}
             {currentScreen === 'support' && <SupportScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'settings' && <SettingsScreen onNavigate={navigate} onBack={goBack} />}
             {currentScreen === 'profile-edit' && <ProfileEditScreen onNavigate={navigate} onBack={goBack} />}

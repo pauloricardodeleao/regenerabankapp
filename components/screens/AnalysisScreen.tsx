@@ -12,11 +12,9 @@
 */
 
 // [FILE] components/screens/AnalysisScreen.tsx
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  ArrowLeft, Calendar, Filter, ShoppingBag, Coffee, 
-  Zap, Car, ArrowDownLeft, Settings2, Plus, Edit2, Check, X, Trash2, 
-  ChevronDown, Search, Download, CreditCard
+  ArrowLeft, Coffee, Zap, Car, ArrowDownLeft, Settings2, ShoppingBag, Filter, Download, CreditCard, Search, X, Edit2, Trash2
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { ScreenProps, Transaction } from '../../types';
@@ -25,7 +23,6 @@ import { GlassCard } from '../ui/GlassCard';
 import { BottomNav } from '../Layout/BottomNav';
 import { GlassButton } from '../ui/GlassButton';
 
-// Mock Ledger Data
 const MOCK_HISTORY: Partial<Transaction>[] = [
   { id: '1', description: 'Amazon Cloud AWS', amount: 45050, date: '2025-05-12', category: 'shopping', type: 'out' },
   { id: '2', description: 'Uber Corp Services', amount: 2490, date: '2025-05-11', category: 'transport', type: 'out' },
@@ -57,35 +54,11 @@ const PERIODS = [
   { id: '2025-03', label: 'Março 2025' },
 ];
 
-const AVAILABLE_COLORS = ['#3A66FF', '#06B6D4', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#EC4899'];
-
-const useAnimatedCounter = (target: number) => {
-  const [current, setCurrent] = useState(target);
-  useEffect(() => {
-    const start = current;
-    const startTime = performance.now();
-    const duration = 800;
-    const animate = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 4);
-      const next = start + (target - start) * ease;
-      setCurrent(next);
-      if (progress < 1) requestAnimationFrame(animate);
-      else setCurrent(target);
-    };
-    requestAnimationFrame(animate);
-  }, [target]);
-  return current;
-};
-
 export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) => {
   const [selectedPeriod, setSelectedPeriod] = useState('2025-05');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
+  const [categories] = useState<Category[]>(INITIAL_CATEGORIES);
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [tempName, setTempName] = useState('');
 
   const filteredData = useMemo(() => {
     return MOCK_HISTORY.filter(item => 
@@ -112,7 +85,7 @@ export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) =>
     }));
   }, [filteredData, selectedCategory, categories]);
 
-  const animatedTotal = useAnimatedCounter(chartData.reduce((sum, d) => sum + d.value, 0));
+  const totalValue = chartData.reduce((sum, d) => sum + d.value, 0);
 
   const getIcon = (catId: string) => {
     switch (catId) {
@@ -127,18 +100,16 @@ export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) =>
 
   return (
     <div className="relative min-h-screen bg-black flex flex-col pb-24 overflow-hidden">
-      {/* Background Ambience */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#3A66FF]/5 rounded-full blur-[100px] pointer-events-none" />
       
-      {/* Header */}
       <div className="px-6 pt-12 pb-4 flex items-center justify-between sticky top-0 bg-black/80 backdrop-blur-xl z-40 border-b border-white/5">
         <div className="flex items-center gap-4">
           <button onClick={onBack} className="text-white/70 hover:text-white p-2 hover:bg-white/5 rounded-full transition-all">
             <ArrowLeft size={24} />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-white tracking-tight">Ledger Analysis</h1>
-            <p className="text-[10px] text-[#3A66FF] font-black uppercase tracking-widest">Quantum Engine V2</p>
+            <h1 className="text-xl font-bold text-white tracking-tight">Análise de Fluxo</h1>
+            <p className="text-[10px] text-[#3A66FF] font-black uppercase tracking-widest">Protocolo Quantum Shield</p>
           </div>
         </div>
         <button onClick={() => setIsManageModalOpen(true)} className="p-2.5 bg-white/5 rounded-xl text-white/50 hover:text-white transition-all">
@@ -147,7 +118,6 @@ export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) =>
       </div>
 
       <div className="flex-1 overflow-y-auto no-scrollbar pt-6">
-        {/* Period Selector */}
         <div className="px-6 mb-8">
           <div className="flex gap-3 overflow-x-auto no-scrollbar">
             {PERIODS.map(p => (
@@ -165,7 +135,6 @@ export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) =>
           </div>
         </div>
 
-        {/* Visual Analytics */}
         <div className="px-6 mb-10">
           <GlassCard variant="neo" className="h-72 relative flex items-center justify-center border-white/10">
              {chartData.length > 0 ? (
@@ -180,25 +149,21 @@ export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) =>
                 </ResponsiveContainer>
                 <div className="absolute flex flex-col items-center justify-center pointer-events-none">
                   <p className="text-[#9CA3AF] text-[10px] font-black uppercase tracking-[0.2em] mb-1">
-                    {selectedCategory === 'income' ? 'Total Entradas' : 'Total Saídas'}
+                    {selectedCategory === 'income' ? 'Entradas' : 'Saídas'}
                   </p>
-                  <p className="text-3xl font-black text-white tracking-tighter">{formatCurrency(Math.round(animatedTotal))}</p>
+                  <p className="text-3xl font-black text-white tracking-tighter">{formatCurrency(totalValue)}</p>
                 </div>
                </>
              ) : (
                <div className="flex flex-col items-center text-white/20">
                   <Search size={48} className="mb-4" />
-                  <p className="text-sm font-bold">Sem dados para este período</p>
+                  <p className="text-sm font-bold">Sem registros</p>
                </div>
              )}
           </GlassCard>
         </div>
 
-        {/* Category Chips */}
         <div className="px-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-             <h3 className="text-white font-black text-[10px] uppercase tracking-[0.2em] opacity-40">Categorias Ativas</h3>
-          </div>
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
             {categories.map(cat => (
               <button
@@ -216,14 +181,9 @@ export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) =>
           </div>
         </div>
 
-        {/* Transaction Ledger */}
         <div className="px-6 space-y-3 pb-8">
-          <div className="flex items-center justify-between mb-2">
-             <h3 className="text-white font-black text-[10px] uppercase tracking-[0.2em] opacity-40">Movimentações</h3>
-             <Download size={14} className="text-[#3A66FF] cursor-pointer" />
-          </div>
-          {filteredData.length > 0 ? filteredData.map((tx) => (
-            <GlassCard key={tx.id} className="flex items-center justify-between py-4 px-5 border-white/5 hover:bg-white/[0.03] transition-all group" hoverEffect>
+          {filteredData.map((tx) => (
+            <GlassCard key={tx.id} className="flex items-center justify-between py-4 px-5 border-white/5 group" hoverEffect>
               <div className="flex items-center gap-4">
                 <div className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-colors
                   ${tx.type === 'in' ? 'bg-[#10B981]/10 text-[#10B981]' : 'bg-white/5 text-white/50 group-hover:text-white'}`}>
@@ -232,45 +192,38 @@ export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) =>
                 <div>
                   <p className="text-white font-bold text-sm leading-tight">{tx.description}</p>
                   <p className="text-[#9CA3AF] text-[9px] font-black uppercase tracking-widest mt-1 opacity-60">
-                    {new Date(tx.date!).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })} • {categories.find(c => c.id === tx.category)?.label}
+                    {new Date(tx.date!).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                   </p>
                 </div>
               </div>
               <div className="text-right">
                 <p className={`font-black text-sm tracking-tight ${tx.type === 'in' ? 'text-[#10B981]' : 'text-white'}`}>
-                  {tx.type === 'in' ? '+' : ''}{formatCurrency(tx.amount || 0)}
+                  {tx.type === 'in' ? '+' : '-'}{formatCurrency(tx.amount || 0)}
                 </p>
-                <p className="text-[8px] text-[#9CA3AF] font-bold uppercase tracking-widest mt-0.5 opacity-40">Auditado</p>
               </div>
             </GlassCard>
-          )) : (
-            <div className="py-12 text-center opacity-30">
-               <CreditCard size={40} className="mx-auto mb-3" />
-               <p className="text-xs font-bold uppercase tracking-widest">Nenhuma transação registrada</p>
-            </div>
-          )}
+          ))}
         </div>
       </div>
 
-      {/* Category Management Modal (Implementation of edit/delete is encapsulated for UI fidelity) */}
       {isManageModalOpen && (
         <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-2xl flex items-end sm:items-center justify-center animate-in fade-in">
-          <div className="w-full max-w-md bg-[#0A0E17] sm:rounded-[3rem] rounded-t-[3rem] border-t border-white/10 p-8 animate-in slide-in-from-bottom duration-500">
+          <div className="w-full max-w-md bg-[#0A0E17] sm:rounded-[3rem] rounded-t-[3rem] border-t border-white/10 p-8 animate-in slide-in-from-bottom">
              <div className="flex justify-between items-center mb-8">
                 <h3 className="text-xl font-bold text-white tracking-tight">Gestão de Categorias</h3>
                 <button onClick={() => setIsManageModalOpen(false)} className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-all"><X size={20} className="text-white"/></button>
              </div>
-             <div className="space-y-3 max-h-[50vh] overflow-y-auto no-scrollbar">
+             <div className="space-y-3">
                 {categories.filter(c => c.id !== 'all').map(cat => (
-                  <div key={cat.id} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 group">
-                    <div className="w-4 h-4 rounded-full shadow-inner" style={{ backgroundColor: cat.color }} />
+                  <div key={cat.id} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
+                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: cat.color }} />
                     <span className="flex-1 text-white font-bold text-sm">{cat.label}</span>
-                    <Edit2 size={16} className="text-white/30 hover:text-white cursor-pointer transition-colors" />
-                    {cat.id !== 'income' && <Trash2 size={16} className="text-red-500/50 hover:text-red-500 cursor-pointer transition-colors" />}
+                    <Edit2 size={16} className="text-white/30" />
+                    <Trash2 size={16} className="text-red-500/50" />
                   </div>
                 ))}
              </div>
-             <GlassButton fullWidth className="mt-8 bg-white text-black border-none" onClick={() => setIsManageModalOpen(false)}>Atualizar Ledger</GlassButton>
+             <GlassButton fullWidth className="mt-8 bg-white text-black border-none" onClick={() => setIsManageModalOpen(false)}>Concluído</GlassButton>
           </div>
         </div>
       )}
@@ -279,11 +232,3 @@ export const AnalysisScreen: React.FC<ScreenProps> = ({ onNavigate, onBack }) =>
     </div>
   );
 };
-
-/*
-╔══════════════════════════════════════════════════════════════════════════╗
-║  REGENERA BANK - PRODUCTION BUILD                                        ║
-║  System Status: Stable & Secure                                          ║
-║  © 2025 Don Paulo Ricardo de Leão • Todos os direitos reservados         ║
-╚══════════════════════════════════════════════════════════════════════════╝
-*/
