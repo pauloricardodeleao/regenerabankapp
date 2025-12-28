@@ -26,7 +26,6 @@
         overflow: hidden;
       }
 
-      /* Premium Noise Texture */
       .bg-noise {
         position: fixed;
         top: 0;
@@ -40,7 +39,6 @@
         mix-blend-mode: overlay;
       }
 
-      /* Quantum Glassmorphism V3.0 */
       .glass-panel {
         background: rgba(10, 14, 23, 0.65);
         backdrop-filter: blur(20px) saturate(180%);
@@ -49,16 +47,8 @@
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
       }
       
-      /* Utilities */
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-      .text-gradient-gold {
-        background: linear-gradient(135deg, #FFD700 0%, #FDB931 50%, #9E7D2B 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
 
       .text-gradient-cyber {
         background: linear-gradient(135deg, #3A66FF 0%, #06B6D4 50%, #00F0FF 100%);
@@ -67,17 +57,11 @@
         background-clip: text;
       }
 
-      /* Advanced Animations */
       @keyframes float-y {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-6px); }
       }
       .animate-float { animation: float-y 4s ease-in-out infinite; }
-
-      @keyframes glow-pulse {
-        0%, 100% { box-shadow: 0 0 20px rgba(58, 102, 255, 0.2); }
-        50% { box-shadow: 0 0 40px rgba(58, 102, 255, 0.5); }
-      }
 
       .perspective-3d {
         perspective: 1000px;
@@ -96,11 +80,11 @@
     "framer-motion": "https://aistudiocdn.com/framer-motion@^12.4.7",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "express": "https://aistudiocdn.com/express@^5.2.1",
-    "@nestjs/core": "https://aistudiocdn.com/@nestjs/core@^11.1.9",
-    "firebase-functions": "https://aistudiocdn.com/firebase-functions@^7.0.1",
-    "@nestjs/common": "https://aistudiocdn.com/@nestjs/common@^11.1.9",
-    "@nestjs/platform-express": "https://aistudiocdn.com/@nestjs/platform-express@^11.1.9"
+    "@nestjs/core": "https://esm.sh/@nestjs/core@^11.1.10",
+    "@nestjs/platform-express": "https://esm.sh/@nestjs/platform-express@^11.1.10",
+    "express": "https://esm.sh/express@^5.2.1",
+    "firebase-functions": "https://esm.sh/firebase-functions@^7.0.2",
+    "@nestjs/common": "https://esm.sh/@nestjs/common@^11.1.10"
   }
 }
 </script>

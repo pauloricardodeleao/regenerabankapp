@@ -19,7 +19,7 @@ import { formatCurrency } from "./formatters";
 /**
  * REGENERA CORE AI SERVICE - GOLD MASTER EDITION
  * Model: gemini-3-flash-preview
- * Standard: The Don Standard (ACID Compliance / High Availability)
+ * Standard: The Don Standard (ACID Compliance)
  */
 
 const SYSTEM_INSTRUCTION = `
@@ -37,8 +37,6 @@ REGRAS DE RESPOSTA:
 1. Tom de voz institucional de alta fidelidade. Sem gírias ou emojis.
 2. Formatação Markdown obrigatória para dados monetários.
 3. Respostas sintetizadas para UX móvel.
-4. Priorize ativos ESG e créditos de carbono Regenera.
-5. Em falhas de autenticação 404/403, informe sobre a sincronização de credenciais em curso.
 `;
 
 export const generateRaphaResponse = async (
@@ -46,17 +44,10 @@ export const generateRaphaResponse = async (
   chatHistory: {role: 'user' | 'model', parts: [{text: string}]}[],
   retries = 3
 ): Promise<string> => {
-  // Obtenção exclusiva via process.env.API_KEY para garantir injeção via EAS Secrets
-  const API_KEY = process.env.API_KEY;
-
-  if (!API_KEY || API_KEY === "undefined") {
-    console.error("[CRITICAL] REGENERA SECURITY: API_KEY MISSING IN ENVIRONMENT.");
-    return "O terminal de inteligência está em modo de manutenção para sincronização com o Quantum Core. Sua integridade financeira permanece protegida.";
-  }
+  // Inicialização exclusiva via process.env.API_KEY conforme política de segurança
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   try {
-    const ai = new GoogleGenAI({ apiKey: API_KEY });
-    
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [
@@ -65,41 +56,32 @@ export const generateRaphaResponse = async (
       ],
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.35, // Alta precisão para transações financeiras
+        temperature: 0.3,
         maxOutputTokens: 1024,
         thinkingConfig: { thinkingBudget: 0 }
       }
     });
 
     const text = response.text;
-    if (!text) throw new Error("INFERENCE_EMPTY_RESULT");
+    if (!text) throw new Error("EMPTY_INFERENCE");
 
     return text;
 
   } catch (error: any) {
     const errorMsg = error?.message || "";
     
-    // Tratamento de falha de entidade (Requested entity not found) ou credencial inválida
-    if (errorMsg.includes("Requested entity was not found") || errorMsg.includes("403") || errorMsg.includes("404")) {
+    // Tratamento de falha de propagação de credenciais
+    if (errorMsg.includes("Requested entity was not found") || errorMsg.includes("403")) {
       console.error("[SECURITY] AUTHENTICATION FAILURE: Credential propagation required.");
-      return "Sincronização de credenciais pendente no novo escopo do projeto (novo-regenera). O acesso será restaurado automaticamente após a propagação do token de segurança.";
+      return "Sincronização de credenciais pendente no ambiente de produção. Seus ativos permanecem protegidos pelo Quantum Shield.";
     }
 
     if (retries > 0) {
-      console.warn(`[RETRY] Intelligent Backoff in progress. Attempts left: ${retries}`);
-      await new Promise(res => setTimeout(res, 1000 * (4 - retries)));
+      await new Promise(res => setTimeout(res, 1000));
       return generateRaphaResponse(userMessage, chatHistory, retries - 1);
     }
     
-    console.error("[CRITICAL] INFRASTRUCTURE FAILURE:", error);
-    return "Detectamos uma flutuação na rede neural central. Seus dados e ativos permanecem seguros sob o protocolo de custódia Regenera.";
+    console.error("[CRITICAL] AI INFRASTRUCTURE FAILURE:", error);
+    return "O terminal de inteligência está em modo de manutenção para sincronização com o Quantum Core. Tente novamente em instantes.";
   }
 };
-
-/*
-╔══════════════════════════════════════════════════════════════════════════╗
-║  REGENERA BANK - PRODUCTION BUILD                                        ║
-║  System Status: Stable & Secure                                          ║
-║  © 2025 Don Paulo Ricardo de Leão • Todos os direitos reservados         ║
-╚══════════════════════════════════════════════════════════════════════════╝
-*/

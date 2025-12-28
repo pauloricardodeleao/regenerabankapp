@@ -15,11 +15,11 @@
     "recharts": "^3.5.1",
     "@google/genai": "^1.31.0",
     "framer-motion": "^12.4.7",
+    "@nestjs/core": "^11.1.10",
+    "@nestjs/platform-express": "^11.1.10",
     "express": "^5.2.1",
-    "@nestjs/core": "^11.1.9",
-    "firebase-functions": "^7.0.1",
-    "@nestjs/common": "^11.1.9",
-    "@nestjs/platform-express": "^11.1.9"
+    "firebase-functions": "^7.0.2",
+    "@nestjs/common": "^11.1.10"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

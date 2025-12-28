@@ -12,11 +12,11 @@
 */
 
 // [FILE] components/screens/DashboardScreen.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Bell, Eye, EyeOff, QrCode, ArrowUpRight, ArrowDownLeft, 
-  Wallet, TrendingUp, Leaf, Store, Gamepad2, Bone, Globe, Aperture,
-  Search, ArrowRight, ShoppingBag, ShieldCheck, Sparkles, PlusCircle
+  Wallet, TrendingUp, Leaf, ShoppingBag, Gamepad2, Bone, 
+  Aperture, ArrowRight, ShieldCheck, Sparkles, HelpCircle 
 } from 'lucide-react';
 import { ScreenProps, ScreenName } from '../../types';
 import { MOCK_USER } from '../../constants';
@@ -64,11 +64,9 @@ export const DashboardScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
 
   return (
     <div className="relative h-screen bg-black flex flex-col overflow-hidden">
-      {/* Ambient Lighting */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#3A66FF]/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-[#06B6D4]/5 rounded-full blur-[120px] pointer-events-none" />
       
-      {/* Dynamic Header */}
       <div className={`px-6 pt-12 pb-4 flex items-center justify-between sticky top-0 z-50 transition-all duration-500 ${scrolled ? 'bg-black/80 backdrop-blur-xl border-b border-white/5' : 'bg-transparent'}`}>
         <div className="flex items-center gap-3">
           <div 
@@ -86,8 +84,14 @@ export const DashboardScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
         </div>
         <div className="flex gap-2">
           <button 
+            onClick={() => onNavigate('support')} 
+            className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-white/70 hover:bg-white/10 transition-all"
+          >
+            <HelpCircle size={20} />
+          </button>
+          <button 
             onClick={() => onNavigate('notifications')} 
-            className="relative w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-white/70 hover:bg-white/10 active:scale-90 transition-all"
+            className="relative w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-white/70 hover:bg-white/10 transition-all"
           >
             <Bell size={20} />
             <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#FF3B30] rounded-full border-2 border-black animate-pulse" />
@@ -99,7 +103,6 @@ export const DashboardScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
         className="flex-1 px-6 space-y-6 overflow-y-auto no-scrollbar pb-32 pt-4" 
         onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 20)}
       >
-        {/* Wealth Card */}
         <GlassCard 
           variant="neo" 
           className="!p-6 border-white/10 group overflow-hidden" 
@@ -142,7 +145,6 @@ export const DashboardScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
           </div>
         </GlassCard>
 
-        {/* Quick Interaction Grid */}
         <div className="grid grid-cols-4 gap-3">
           {quickActions.map((action, i) => (
             <button 
@@ -158,7 +160,6 @@ export const DashboardScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
           ))}
         </div>
 
-        {/* Rapha AI Insight Layer */}
         <div 
             onClick={() => onNavigate('chat')} 
             className="p-5 rounded-3xl bg-gradient-to-br from-[#1A1F3D] to-[#0A0E17] border border-[#3A66FF]/20 cursor-pointer flex items-center gap-4 group hover:border-[#3A66FF]/40 transition-all relative overflow-hidden"
@@ -177,7 +178,6 @@ export const DashboardScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
           <ArrowRight size={18} className="text-white/40 group-hover:translate-x-1 group-hover:text-white transition-all relative z-10" />
         </div>
 
-        {/* Ecosystem Carousel */}
         <div>
            <h3 className="text-white font-black text-[10px] uppercase tracking-[0.3em] opacity-40 mb-4 px-2">Ecosystem Horizon</h3>
            <div className="grid grid-cols-4 gap-3">
@@ -196,7 +196,6 @@ export const DashboardScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
            </div>
         </div>
 
-        {/* Ledger Feed */}
         <div>
           <div className="flex items-center justify-between mb-4 px-2">
             <h3 className="text-white font-black text-[10px] uppercase tracking-[0.3em] opacity-40">Financial Ledger</h3>
@@ -231,7 +230,6 @@ export const DashboardScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Primary Floating Action: Vision AR */}
       <div className="fixed bottom-28 right-6 z-50">
         <button 
             onClick={() => onNavigate('ar-view')} 
@@ -246,11 +244,3 @@ export const DashboardScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
     </div>
   );
 };
-
-/*
-╔══════════════════════════════════════════════════════════════════════════╗
-║  REGENERA BANK - PRODUCTION BUILD                                        ║
-║  System Status: Stable & Secure                                          ║
-║  © 2025 Don Paulo Ricardo de Leão • Todos os direitos reservados         ║
-╚══════════════════════════════════════════════════════════════════════════╝
-*/
